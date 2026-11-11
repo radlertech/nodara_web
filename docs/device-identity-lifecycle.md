@@ -120,7 +120,7 @@ Do not use it as proof of uniqueness or as a payout target.
 
 ## Reinstall Behavior
 
-If the contributor removes and reinstalls the app, the device identity should be reused as long as the persistent MundusX data directory remains intact.
+If the contributor removes and reinstalls the app, the device identity should be reused as long as the existing MundusX data directory remains intact.
 
 ### Expected behavior
 
@@ -130,7 +130,7 @@ If the contributor removes and reinstalls the app, the device identity should be
 
 ### When identity is lost
 
-The device only becomes a new identity if the contributor also deletes the MundusX data directory or explicitly revokes the device.
+The device only becomes a new identity if the contributor also deletes the existing MundusX data directory or explicitly revokes the device.
 
 That keeps the install path predictable:
 

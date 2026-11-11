@@ -273,7 +273,7 @@ The install strategy is complete when:
 ## Product Positioning
 
 - `opengpu` remains the CLI name.
-- `mundusx.ai` remains a future public install entrypoint.
+- `nodara.si` is the public website; the install entrypoint still uses the current release channel.
 - The local install page should be the same command the installer docs use.
 - GitHub Releases are the artifact source.
 - The local docs site mirrors the install, identity, onboarding, credits, and release pages before anything is wired to the public domain.

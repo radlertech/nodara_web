@@ -121,9 +121,9 @@ function Select-AgentMode {
 
 function Select-SetupMode {
   Write-Host ""
-  Write-Host "How will you use MundusX?"
+  Write-Host "How will you use Nodara?"
   Write-Host "  1. Develop with AI on my local projects (recommended)"
-  Write-Host "  2. Contribute compute to the MundusX network"
+  Write-Host "  2. Contribute compute to the Nodara network"
   Write-Host "  3. Both development and compute contribution"
   while ($true) {
     $choice = Read-Host "Choose 1, 2, or 3 [default: 1]"
@@ -780,7 +780,7 @@ $trayExpected = $null
 $trayIconExpected = $null
 $runtimeExpected = $null
 
-Write-Output "MundusX Windows installer"
+Write-Output "Nodara Windows installer"
 Write-Output "  target: $target"
 Write-Output "  profile: $profile"
 Write-Output "  gpu: $(if ($gpu) { $gpu.Name } else { 'none detected' })"
@@ -945,7 +945,7 @@ Set-Item -Path $chatProtocolKey -Value 'URL:MundusX'
 New-ItemProperty -Path $chatProtocolKey -Name 'URL Protocol' -Value '' -PropertyType String -Force | Out-Null
 New-Item -Path "$chatProtocolKey\shell\open\command" -Force | Out-Null
 Set-Item -Path "$chatProtocolKey\shell\open\command" -Value ('"' + $finalTray + '" --reconnect "%1"')
-Write-Output 'Configured browser Reconnect to open the installed MundusX app'
+Write-Output 'Configured browser Reconnect to open the installed Nodara app'
 if (-not $SkipTrayAutoStart) {
   $runKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
   New-Item -Path $runKey -Force | Out-Null

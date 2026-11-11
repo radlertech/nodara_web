@@ -60,7 +60,7 @@ configure_chat_service() {
     desktop_path=$(printf '%s' "$reconnect" | sed 's/\\/\\\\\\\\/g;s/"/\\"/g;s/`/\\`/g;s/\$/\\$/g;s/%/%%/g')
     cat > "$config/systemd/user/mundusx-chat.service" <<EOF
 [Unit]
-Description=MundusX saved Chat connection
+Description=Nodara saved Chat connection
 StartLimitIntervalSec=0
 [Service]
 ExecStart=/bin/bash "$unit_path"
@@ -73,7 +73,7 @@ EOF
     cat > "$share/applications/mundusx-reconnect.desktop" <<EOF
 [Desktop Entry]
 Type=Application
-Name=MundusX Reconnect
+Name=Nodara Reconnect
 Exec="$desktop_path" %u
 Terminal=false
 NoDisplay=true
@@ -480,7 +480,7 @@ EOF
   echo "The node agent will own container startup and shutdown for connected vLLM nodes."
 }
 
-echo "MundusX installer"
+echo "Nodara installer"
 echo "  target: ${target}"
 echo "  source: ${release_source}"
 echo "  node agent: ${agent_asset_name}"
@@ -539,7 +539,7 @@ fi
 
 if [ "$runtime_only" -eq 0 ] && [ "$install_only" -eq 0 ]; then
   echo
-  echo "Configuring this machine as a public MundusX contributor..."
+  echo "Configuring this machine as a public Nodara contributor..."
   "$INSTALL_DIR/$BIN_NAME" install \
     --public \
     --cap-percent "$cap_percent" \

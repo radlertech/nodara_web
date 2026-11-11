@@ -25,7 +25,8 @@ require_line() {
 }
 
 require_file "index.html"
-require_file "assets/mundusx-logo-official.svg"
+require_file "assets/nodara-mark.png"
+require_file "assets/nodara-icon.svg"
 for size in mobile tablet desktop; do
   require_file "assets/network-cta-mountains-$size.webp"
   require_file "assets/meet-atlas-background-$size.webp"
@@ -57,12 +58,14 @@ require_line "index.html" "./assets/network-cta-mountains-tablet.webp"
 require_line "index.html" "./assets/network-cta-mountains-mobile.webp"
 require_line "index.html" 'data-bg-name="meet-atlas-background"'
 require_line "index.html" 'data-bg-name="network-hero-globe"'
-require_line "index.html" "./assets/mundusx-logo-official.svg"
+require_line "index.html" "./assets/nodara-mark.png"
+require_line "index.html" '<title>Nodara</title>'
+require_line "index.html" './assets/nodara-icon.svg'
 require_line "index.html" '--wrap: min(1680px, calc(100% - 88px))'
 require_line "index.html" '--wrap: min(100% - 36px, 768px)'
 require_line "index.html" '--wrap: min(100% - 26px, 375px)'
 require_line "index.html" 'href="./network/">Network</a>'
-require_line "index.html" 'href="https://chat.mundusx.ai/">Chat with Atlas'
+require_line "index.html" 'href="https://nodara.si/">Chat with Atlas'
 require_line "atlas/index.html" '--wrap: min(1680px, calc(100% - 88px))'
 require_line "atlas/index.html" '--wrap: min(100% - 36px, 768px)'
 require_line "atlas/index.html" '--wrap: min(100% - 26px, 375px)'
@@ -82,7 +85,8 @@ require_line "network/index.html" "Live Network"
 require_line "network/index.html" "People power<br />intelligence."
 require_line "network/index.html" "Users online"
 require_line "network/index.html" "A living, global network."
-require_line "network/index.html" "../assets/mundusx-logo-official.svg"
+require_line "network/index.html" "../assets/nodara-mark.png"
+require_line "network/index.html" '../assets/nodara-icon.svg'
 require_line "network/index.html" "../assets/network-hero-globe-desktop.webp"
 require_line "network/index.html" "../assets/network-hero-globe-tablet.webp"
 require_line "network/index.html" "../assets/network-hero-globe-mobile.webp"
@@ -111,7 +115,8 @@ require_line "device-identity/index.html" "Device Identity Lifecycle"
 require_line "device-identity/index.html" "non-exportable device keys"
 require_line "public/docs/index.html" "Public Endpoint Mirror"
 require_line "public/docs/install/index.html" "Canonical command"
-require_line "public/install/index.html" "Install MundusX"
+require_line "public/install/index.html" "Install Nodara"
+require_line "public/install/index.html" '../../assets/nodara-icon.svg'
 require_line "public/install/index.html" "Fetching ../install.json"
 require_line "public/install.json" "\"kind\": \"install-manifest\""
 require_line "public/install.json" "\"release_base_url\": \"https://github.com/mundusx/mundusx/releases/latest/download\""

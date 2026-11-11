@@ -1,12 +1,12 @@
 # Local Install Page Preview
 
-This page defines the localhost-first install touch for MundusX while we keep the public domain for later.
+This page defines the localhost-first install touch for Nodara while installer hosting remains on the current release channel.
 
 ## Purpose
 
 The install page should do one thing well:
 
-- explain that MundusX installs with one command
+- explain that Nodara installs with one command
 - explain that the `opengpu` CLI is installed with one command
 - show the exact copy-paste install command
 - set expectations that the installer downloads a signed platform release binary from localhost during development

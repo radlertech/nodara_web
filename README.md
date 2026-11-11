@@ -1,29 +1,29 @@
-# MundusX Web
+# Nodara Web
 
-Public marketing and documentation site for MundusX.
+Public marketing and documentation site for Nodara at `nodara.si`.
 
-This repository builds the static web surface for the MundusX public site: the home page, Atlas, Compute, Network, Developers, public docs, release pages, and the install entry point for contributors.
+This repository builds the static web surface for the Nodara public site: the home page, Atlas, Compute, Network, Developers, public docs, release pages, and the install entry point for contributors.
 
-## What Is MundusX?
+## What Is Nodara?
 
-MundusX is a distributed AI compute platform. It connects people who have available GPU capacity with developers and applications that need AI inference capacity.
+Nodara is a distributed AI compute platform. It connects people who have available GPU capacity with developers and applications that need AI inference capacity.
 
 The product is organized around three connected surfaces:
 
-- **MundusX Compute**: the contributor side of the network. A user installs the node software, connects a machine, chooses how much capacity to contribute, and runs the local agent through the `opengpu` CLI.
-- **Atlas**: the model and AI application surface for people building or using AI capabilities on top of MundusX.
-- **Developer APIs**: OpenAI-compatible API surfaces for building applications that can use MundusX models and distributed GPU compute.
+- **Nodara Compute**: the contributor side of the network. A user installs the node software, connects a machine, chooses how much capacity to contribute, and runs the local agent through the `opengpu` CLI.
+- **Atlas**: the model and AI application surface for people building or using AI capabilities on top of Nodara.
+- **Developer APIs**: OpenAI-compatible API surfaces for building applications that can use Nodara models and distributed GPU compute.
 
 The contributor installation path is centered on the `opengpu` command. The installer downloads a platform-specific release asset, verifies checksums and signed manifest data, installs the CLI and node agent, then hands first-run setup to `opengpu install`. From there, contributors select a control plane, contribution cap, backend, and model path before starting the node.
 
 ## What This Repo Contains
 
-- Static marketing pages for the public MundusX site.
+- Static marketing pages for the public Nodara site.
 - Public documentation pages generated from `docs/*.md`.
 - Local and public install pages for the `opengpu` contributor CLI.
 - Shell and PowerShell bootstrap installers.
 - Build, watch, serve, and smoke-test scripts for the generated static site.
-- Media assets used by the site, including responsive WebP variants and the MundusX logo.
+- Media assets used by the site, including responsive WebP variants, the Nodara mark, and favicon.
 
 ## Project Structure
 
@@ -89,7 +89,7 @@ dist/public-docs-site
 
 Important generated routes include:
 
-- `/` - public MundusX home page
+- `/` - public Nodara home page
 - `/atlas/` - Atlas product page
 - `/compute/` - contributor compute page
 - `/network/` - network page
@@ -119,7 +119,7 @@ The current installer strategy is documented in [docs/install-strategy.md](docs/
 
 ## Device Identity
 
-MundusX contributor nodes use a stable device identity so a machine can be recognized across normal app reinstalls, OS updates, and restarts.
+Nodara contributor nodes use a stable device identity so a machine can be recognized across normal app reinstalls, OS updates, and restarts.
 
 The current design stores signing material in encrypted-at-rest form and keeps raw private-key bytes out of normal CLI and agent records. Platform behavior differs by operating system:
 
