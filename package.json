@@ -1,8 +1,8 @@
 {
-  "name": "mundusx_web",
+  "name": "nodara_web",
   "private": true,
   "version": "0.1.0",
-  "description": "MundusX public marketing/docs static site (home, docs, install, release pages).",
+  "description": "Nodara public marketing/docs static site (home, docs, install, release pages).",
   "scripts": {
     "dev": "PORT=3003 node scripts/watch-docs-site.mjs dist/public-docs-site",
     "build:docs-site": "node scripts/build-public-docs-site.mjs dist/public-docs-site",
