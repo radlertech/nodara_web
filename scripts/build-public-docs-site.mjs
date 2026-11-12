@@ -6,8 +6,10 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outputDir = path.resolve(process.argv[2] ?? path.join(repoRoot, "dist/public-docs-site"));
-const repoReleaseBaseUrl = "https://github.com/mundusx/mundusx/releases/latest/download";
-const repoReleaseNotesUrl = "https://github.com/mundusx/mundusx/releases/latest";
+const repoReleaseBaseUrl = "https://github.com/mundusx/releases/releases/download/opengpu-prod";
+const repoReleaseNotesUrl = "https://github.com/mundusx/releases/releases/tag/opengpu-prod";
+const brandMarkSource = path.join(repoRoot, "media/nodara-mark.png");
+const brandIconSource = path.join(repoRoot, "media/nodara-icon.svg");
 const installScriptContents = fs.readFileSync(path.join(repoRoot, "install.sh"), "utf8");
 const installPowershellContents = fs.readFileSync(path.join(repoRoot, "install.ps1"), "utf8");
 
@@ -28,22 +30,22 @@ function copyThreeJs(assetDir) {
 const pages = [
   {
     slug: "",
-    title: "MundusX Docs",
+    title: "Nodara Docs",
     sourcePath: null,
     intro:
-      "Public-facing documentation for install, device identity, and release flow previews in the MundusX repo.",
+      "Public documentation for Nodara install, device identity, and release flow previews.",
   },
   {
     slug: "install",
-    title: "Install MundusX",
+    title: "Install Nodara",
     sourcePath: path.join(repoRoot, "docs/install-page.md"),
-    intro: "Canonical install flow and command for the current localhost-first release path.",
+    intro: "Choose your operating system, download the installer, and follow the setup steps.",
   },
   {
     slug: "device-identity",
     title: "Device Identity Lifecycle",
     sourcePath: path.join(repoRoot, "docs/device-identity-lifecycle.md"),
-    intro: "How contributor identity is stored, reused, and reset across the MundusX lifecycle.",
+    intro: "How contributor identity is stored, reused, and reset across the Nodara lifecycle.",
   },
   {
     slug: "release",
@@ -61,14 +63,14 @@ writeDocsVariant({
   siteRootDepth: 0,
   eyebrow: "Public Repo Docs",
   homeIntro:
-    "Public-facing documentation for install, device identity, and release flow previews in the MundusX repo.",
+    "Public documentation for Nodara install, device identity, and release flow previews.",
 });
 writeDocsVariant({
   outputBaseDir: path.join(outputDir, "docs"),
   siteRootDepth: 1,
   eyebrow: "Local Docs Preview",
   homeIntro:
-    "Local documentation preview for install, device identity, and release flow notes in the MundusX repo.",
+    "Local documentation preview for Nodara install, device identity, and release flow notes.",
 });
 writeDocsVariant({
   outputBaseDir: path.join(outputDir, "public", "docs"),
@@ -99,7 +101,8 @@ function writeDocsVariant({ outputBaseDir, siteRootDepth, eyebrow, homeIntro }) 
 function writeMarketingHomepage() {
   const assetDir = path.join(outputDir, "assets");
   fs.mkdirSync(assetDir, { recursive: true });
-  fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
+  fs.copyFileSync(brandMarkSource, path.join(assetDir, "nodara-mark.png"));
+  fs.copyFileSync(brandIconSource, path.join(assetDir, "nodara-icon.svg"));
   fs.copyFileSync(path.join(repoRoot, "media/network-compute-globe.svg"), path.join(assetDir, "network-compute-globe.svg"));
   copyThreeJs(assetDir);
   copyResponsiveVariants(assetDir, "network-cta-mountains");
@@ -126,7 +129,6 @@ function writeAtlasPage() {
   const atlasDir = path.join(outputDir, "atlas");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.mkdirSync(atlasDir, { recursive: true });
-  fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
   copyResponsiveVariants(assetDir, "homepage-dark-bg");
   copyResponsiveVariants(assetDir, "network-cta-mountains");
   fs.writeFileSync(path.join(atlasDir, "index.html"), fs.readFileSync(path.join(repoRoot, "media/atlas.html"), "utf8"));
@@ -137,7 +139,6 @@ function writeComputePage() {
   const computeDir = path.join(outputDir, "compute");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.mkdirSync(computeDir, { recursive: true });
-  fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
   copyResponsiveVariants(assetDir, "network-hero-globe");
   copyResponsiveVariants(assetDir, "network-cta-mountains");
   copyResponsiveVariants(assetDir, "compute-macbook-code");
@@ -152,7 +153,6 @@ function writeDevelopersPage() {
   const developersDir = path.join(outputDir, "developers");
   fs.mkdirSync(assetDir, { recursive: true });
   fs.mkdirSync(developersDir, { recursive: true });
-  fs.copyFileSync(path.join(repoRoot, "media/mundusx-logo-official.svg"), path.join(assetDir, "mundusx-logo-official.svg"));
   copyResponsiveVariants(assetDir, "homepage-dark-bg");
   copyResponsiveVariants(assetDir, "meet-atlas-background");
   fs.writeFileSync(path.join(developersDir, "index.html"), fs.readFileSync(path.join(repoRoot, "media/developers.html"), "utf8"));
@@ -166,7 +166,7 @@ function renderMarketingHomePage() {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MundusX</title>
+    <title>Nodara</title>
     <style>
       :root {
         color-scheme: dark;
@@ -1289,7 +1289,7 @@ function renderMarketingHomePage() {
   <body>
     <header class="topbar">
       <nav class="nav" aria-label="Primary">
-        <a class="brand" href="./" aria-label="MundusX home">${brandMark()}<span>MundusX</span></a>
+        <a class="brand" href="./" aria-label="Nodara home">${brandMark()}<span>Nodara</span></a>
         <div class="links" aria-label="Sections">
           <a href="./atlas/">Atlas</a>
           <a href="#compute">Compute</a>
@@ -1310,14 +1310,14 @@ function renderMarketingHomePage() {
             <h1 id="home-title">AI that works across <span>your world.</span></h1>
             <p class="lead">Chat, build, research and run AI workloads across a secure decentralized compute network - with your projects and tools connected.</p>
             <div class="hero-buttons">
-              <a class="btn primary" href="https://chat.mundusx.ai/">Start with MundusX</a>
+              <a class="btn primary" href="https://nodara.si/">Start with Nodara</a>
               <a class="btn ghost" href="./network/">Explore the network</a>
             </div>
             <div class="notes"><span>Start free</span><span>Sign in with Google</span><span>Connect your own computer</span></div>
           </div>
           <div class="product-shell" aria-label="Atlas workspace preview">
             <aside class="sidebar">
-              <div class="mini-brand">${brandMark("mini-mark")}<span>MundusX <small class="mini-kicker">A better tomorrow</small></span></div>
+              <div class="mini-brand">${brandMark("mini-mark")}<span>Nodara <small class="mini-kicker">A better tomorrow</small></span></div>
               <div class="btn primary new-chat">+ New Chat</div>
               <div class="section-label">Workspace</div>
               <div class="side-item">${siteIcon("folder")}Projects</div>
@@ -1338,7 +1338,7 @@ function renderMarketingHomePage() {
               <div class="toggle"><span>${siteIcon("sun")}</span><span>${siteIcon("moon")}</span></div>
               <div class="assistant-title">
                 <h2>Hello, my name is <span>Atlas.</span></h2>
-                <p>I can help you chat, write code, analyze data, build solutions and research anything - across the MundusX network.</p>
+                <p>I can help you chat, write code, analyze data, build solutions and research anything - across the Nodara network.</p>
               </div>
               <div class="tool-grid">
                 <div class="tool-card"><span class="tool-icon">${siteIcon("code")}</span><b>Code</b><p>Write, debug and explain code</p></div>
@@ -1351,7 +1351,7 @@ function renderMarketingHomePage() {
           </div>
         </div>
       </section>
-      <section class="feature-rail" aria-label="MundusX features">
+      <section class="feature-rail" aria-label="Nodara features">
         <a class="rail-card" href="./public/docs/"><span class="rail-icon">${siteIcon("message-square")}</span><div><h3>Chat with Atlas</h3><p>Your AI companion for work, ideas and everyday tasks.</p></div><span aria-hidden="true">&gt;</span></a>
         <a class="rail-card" href="./docs/"><span class="rail-icon">${siteIcon("folder")}</span><div><h3>Projects</h3><p>Keep chats, files and work together in one place.</p></div><span aria-hidden="true">&gt;</span></a>
         <a class="rail-card" href="./docs/install/"><span class="rail-icon">${siteIcon("terminal")}</span><div><h3>Harness</h3><p>Run code on your own computer</p></div><span aria-hidden="true">&gt;</span></a>
@@ -1398,7 +1398,7 @@ function renderMarketingHomePage() {
                 <circle cx="52" cy="74" r="4" /><circle cx="115" cy="32" r="4" /><circle cx="183" cy="21" r="5" /><circle cx="251" cy="47" r="4" /><circle cx="310" cy="101" r="5" /><circle cx="330" cy="174" r="4" /><circle cx="305" cy="244" r="4" /><circle cx="238" cy="317" r="4" /><circle cx="158" cy="336" r="4" /><circle cx="80" cy="303" r="4" /><circle cx="35" cy="230" r="4" /><circle cx="28" cy="145" r="3" /><circle cx="108" cy="126" r="4" /><circle cx="206" cy="104" r="4" /><circle cx="180" cy="180" r="4" />
               </g>
             </svg>
-            <div class="network-core-content">${brandMark()}<h2>MundusX <span>Network</span></h2><p>A global decentralized<br />compute network</p></div>
+            <div class="network-core-content">${brandMark()}<h2>Nodara <span>Network</span></h2><p>A global decentralized<br />compute network</p></div>
           </div>
           <div class="server-and-panel">
             <div class="server-stack" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -1421,7 +1421,7 @@ function renderMarketingHomePage() {
           </div>
           <div class="cta">
             <div>
-              <h2>Ready to build with MundusX?</h2>
+              <h2>Ready to build with Nodara?</h2>
               <p>Join a growing community of builders, researchers and businesses shaping a more open and decentralized AI future.</p>
             </div>
             <div>
@@ -1435,7 +1435,7 @@ function renderMarketingHomePage() {
     </main>
     <footer class="site-footer">
       <div class="footer-inner">
-        <a class="brand" href="./" aria-label="MundusX home">${brandMark()}<span>MundusX</span></a>
+        <a class="brand" href="./" aria-label="Nodara home">${brandMark()}<span>Nodara</span></a>
         <div class="footer-links">
           <a href="./public/docs/">Product</a>
           <a href="./network/">Network</a>
@@ -1459,7 +1459,7 @@ function renderMarketingHomePage() {
 
 function renderNetworkPage() {
   const logo = (className = "mark") =>
-    `<img class="${className}" src="../assets/mundusx-logo-official.svg" alt="" aria-hidden="true" />`;
+    `<img class="${className}" src="../assets/nodara-mark.png" alt="" aria-hidden="true" />`;
 
   const statItems = [
     ["globe", "190", "Countries"],
@@ -1554,7 +1554,8 @@ function renderNetworkPage() {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MundusX Network</title>
+    <title>Nodara Network</title>
+    <link rel="icon" href="../assets/nodara-icon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&display=swap" rel="stylesheet" />
@@ -3043,7 +3044,7 @@ function renderNetworkPage() {
   <body>
     <header class="topbar" id="topbar">
       <nav class="nav" aria-label="Primary">
-        <a class="brand" href="../" aria-label="MundusX home">${logo()}<span>MundusX</span></a>
+        <a class="brand" href="../" aria-label="Nodara home">${logo()}<span>Nodara</span></a>
         <div class="links" aria-label="Sections">
           <a href="../atlas/">Atlas</a>
           <a href="../compute/">Compute</a>
@@ -3083,7 +3084,7 @@ function renderNetworkPage() {
       <section class="section hero" aria-labelledby="network-title">
         <div class="wrap">
           <div>
-            <span class="eyebrow">MundusX Network</span>
+            <span class="eyebrow">Nodara Network</span>
             <h1 id="network-title">A global network for a <span>brighter tomorrow.</span></h1>
             <p class="lead">A decentralized network of people, compute and ideas - powering a more open, accessible and intelligent future.</p>
             <div class="hero-buttons">
@@ -3137,10 +3138,10 @@ function renderNetworkPage() {
           <div>
             <span class="eyebrow">A truly global community</span>
             <h2 id="community-title">People power<br />intelligence.</h2>
-            <p>From developers and researchers to businesses and everyday users, MundusX connects a global community contributing compute, knowledge and real-world impact.</p>
+            <p>From developers and researchers to businesses and everyday users, Nodara connects a global community contributing compute, knowledge and real-world impact.</p>
             <a class="btn primary" href="#activity">Explore the global map <span aria-hidden="true">&rarr;</span></a>
           </div>
-          <div class="map-wrap" role="group" aria-label="Global MundusX network map showing active community and compute locations.">
+          <div class="map-wrap" role="group" aria-label="Global Nodara network map showing active community and compute locations.">
             <div class="map-plane">
               <picture>
                 <source media="(max-width: 600px)" srcset="../assets/network-world-map-transparent-mobile.webp" />
@@ -3170,9 +3171,9 @@ function renderNetworkPage() {
           <div class="centered-copy">
             <span class="eyebrow">How it works</span>
             <h2 id="how-title">A more <span>open, connected</span> way to build.</h2>
-            <p>MundusX connects people, devices and compute resources across the world, making AI more accessible, resilient and impactful.</p>
+            <p>Nodara connects people, devices and compute resources across the world, making AI more accessible, resilient and impactful.</p>
           </div>
-          <div class="hiw-flow" id="hiwFlow" aria-label="How a local MundusX community connects into the global network and powers distributed compute">
+          <div class="hiw-flow" id="hiwFlow" aria-label="How a local Nodara community connects into the global network and powers distributed compute">
             <svg class="hiw-connectors" viewBox="0 0 1650 580" preserveAspectRatio="none" aria-hidden="true">
               ${hiwConnectorMarkup(hiwConnectorsA)}
               ${hiwConnectorMarkup(hiwConnectorsB)}
@@ -3211,7 +3212,7 @@ function renderNetworkPage() {
               ${hiwTagsHtml}
               <div class="hiw-globe-core">
                 ${logo()}
-                <b>MundusX <span>Network</span></b>
+                <b>Nodara <span>Network</span></b>
                 <p>A global community<br />powering AI together</p>
               </div>
             </div>
@@ -3285,7 +3286,7 @@ function renderNetworkPage() {
     </main>
     <footer class="site-footer">
       <div class="footer-main">
-        <a class="brand" href="../" aria-label="MundusX home">${logo()}<span>MundusX<small>A better tomorrow</small></span></a>
+        <a class="brand" href="../" aria-label="Nodara home">${logo()}<span>Nodara<small>A better tomorrow</small></span></a>
         <div class="footer-col"><h3>Product</h3><a href="../public/docs/">Features</a><a href="../public/install/">Pricing</a><a href="../docs/install/">Roadmap</a></div>
         <div class="footer-col"><h3>Network</h3><a href="#global-map">Global Map</a><a href="#activity">Network Stats</a><a href="#how-title">How it Works</a></div>
         <div class="footer-col"><h3>Developers</h3><a href="../docs/">Docs</a><a href="../public/release/">API</a><a href="../docs/device-identity/">Integrations</a></div>
@@ -3298,7 +3299,7 @@ function renderNetworkPage() {
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2025 MundusX. All rights reserved.</span>
+        <span>© 2025 Nodara. All rights reserved.</span>
         <span class="legal"><a href="../public/docs/">Privacy</a><a href="../public/docs/">Terms</a><a href="../public/docs/">Cookies</a></span>
       </div>
     </footer>
@@ -4270,7 +4271,7 @@ function networkCoreSvg() {
 }
 
 function brandMark(className = "mark") {
-  return `<img class="${className}" src="./assets/mundusx-logo-official.svg" alt="" aria-hidden="true" />`;
+  return `<img class="${className}" src="./assets/nodara-mark.png" alt="" aria-hidden="true" />`;
 }
 
 function siteIcon(name) {
@@ -4318,7 +4319,7 @@ function writePublicInstallSurface() {
 
   const manifest = {
     kind: "install-manifest",
-    product_name: "MundusX",
+    product_name: "Nodara",
     audience: "public",
     install_script_href: "./install.sh",
     install_powershell_href: "./install.ps1",
@@ -4348,7 +4349,7 @@ function writePublicReleaseSurface() {
 
   const manifest = {
     kind: "release-channel",
-    product_name: "MundusX",
+    product_name: "Nodara",
     audience: "public",
     release_base_url: repoReleaseBaseUrl,
     release_notes_url: repoReleaseNotesUrl,
@@ -4385,6 +4386,7 @@ function renderPage(page, options) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(page.title)}</title>
+    <link rel="icon" href="${siteHref(siteRootDepth, page.slug, "assets/nodara-icon.svg")}" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&display=swap" rel="stylesheet" />
@@ -4659,18 +4661,18 @@ function renderPage(page, options) {
   <body>
     <header class="topbar" id="topbar">
       <nav class="nav" aria-label="Primary">
-        <a class="brand" href="${siteHref(siteRootDepth, page.slug, "")}" aria-label="MundusX home">
-          <img src="${siteHref(siteRootDepth, page.slug, "assets/mundusx-logo-official.svg")}" alt="" aria-hidden="true" />
-          <span>MundusX</span>
+        <a class="brand" href="${siteHref(siteRootDepth, page.slug, "")}" aria-label="Nodara home">
+          <img src="${siteHref(siteRootDepth, page.slug, "assets/nodara-mark.png")}" alt="" aria-hidden="true" />
+          <span>Nodara</span>
         </a>
         <div class="nav-links" aria-label="Sections">${nav}</div>
         <div class="nav-actions">
-          <a class="button" href="https://chat.mundusx.ai/">Sign in</a>
+          <a class="button" href="https://nodara.si/">Sign in</a>
           <a class="button primary" href="${siteHref(siteRootDepth, page.slug, "public/install/")}">Get started</a>
         </div>
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg><span>Menu</span></button>
       </nav>
-      <div class="mobile-menu" id="mobile-menu">${nav}<a href="https://chat.mundusx.ai/">Sign in</a><a class="mobile-primary" href="${siteHref(siteRootDepth, page.slug, "public/install/")}">Get started</a></div>
+      <div class="mobile-menu" id="mobile-menu">${nav}<a href="https://nodara.si/">Sign in</a><a class="mobile-primary" href="${siteHref(siteRootDepth, page.slug, "public/install/")}">Get started</a></div>
     </header>
     <script>
       (function () {
@@ -4817,15 +4819,9 @@ function renderMarkdown(page, markdown) {
   flushCodeFence();
 
   const summaryBlocks = [];
-  if (page.slug === "install") {
-    summaryBlocks.push(
-      `<section><h2>Canonical commands</h2><pre><code>RELEASE_BASE_URL=http://127.0.0.1:8788/releases/latest/download bash install.sh
-.\\install.ps1 -ReleaseBaseUrl http://127.0.0.1:8788/releases/latest/download</code></pre></section>`,
-    );
-  }
   if (page.slug === "device-identity") {
     summaryBlocks.push(
-      `<section><h2>Current stance</h2><p>MundusX should prefer non-exportable device keys so the CLI, agent, and worker can request signatures without reading raw private-key bytes.</p></section>`,
+      `<section><h2>Current stance</h2><p>Nodara should prefer non-exportable device keys so the CLI, agent, and worker can request signatures without reading raw private-key bytes.</p></section>`,
     );
   }
 
@@ -4860,231 +4856,167 @@ function relativeHref(fromSlug, toSlug) {
   return `../${toSlug}/`;
 }
 
-function renderPublicInstallPage() {
+function renderPublicInstallPage({ localPreview = false } = {}) {
+  const rootHref = localPreview ? "../" : "../../";
+  const installerHref = localPreview ? "../public/" : "../";
+  const releaseHref = localPreview ? "../public/release/" : "../release/";
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Install MundusX</title>
+    <title>Install Nodara</title>
+    <meta name="description" content="Download Nodara for Windows, macOS, or Linux and follow the setup steps for your operating system." />
+    <link rel="icon" href="${rootHref}assets/nodara-icon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       :root {
-        color-scheme: light;
-        --bg: #f4efe4;
-        --panel: #fffdf8;
-        --text: #1c1c19;
-        --muted: #5e584d;
-        --accent: #0b6bcb;
-        --border: #d9d2c3;
-        --shadow: 0 20px 56px rgba(55, 42, 20, 0.1);
+        color-scheme: dark;
+        --page: #04121a;
+        --surface: #0a2028;
+        --surface-raised: #102b32;
+        --line: rgba(132, 207, 189, .22);
+        --text: #f1faf7;
+        --muted: #a7c3bd;
+        --green: #20dda0;
+        --green-deep: #0b9c72;
+        --wrap: min(1120px, calc(100% - 48px));
       }
       * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
       body {
         margin: 0;
-        font-family: "Iowan Old Style", "Palatino Linotype", serif;
-        background:
-          radial-gradient(circle at top left, rgba(11, 107, 203, 0.15), transparent 30%),
-          linear-gradient(180deg, #efe7d6 0%, var(--bg) 28%, #fbfaf7 100%);
+        min-height: 100vh;
         color: var(--text);
+        font: 400 16px/1.55 "Outfit", ui-sans-serif, system-ui, sans-serif;
+        background: radial-gradient(circle at 78% 4%, rgba(17, 172, 127, .18), transparent 30rem),
+          radial-gradient(circle at 0% 65%, rgba(14, 116, 111, .12), transparent 26rem), var(--page);
       }
-      a { color: var(--accent); }
-      .shell {
-        width: min(1040px, calc(100% - 2rem));
-        margin: 0 auto;
-        padding: 2.5rem 0 4rem;
+      a { color: inherit; }
+      button { font: inherit; }
+      :focus-visible { outline: 3px solid var(--green); outline-offset: 4px; }
+      [hidden] { display: none !important; }
+      .shell { width: var(--wrap); margin: 0 auto; }
+      .site-header { border-bottom: 1px solid var(--line); }
+      .header-inner { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+      .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-size: 20px; font-weight: 700; }
+      .brand img { width: 42px; height: 32px; object-fit: contain; }
+      .header-links { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(16px, 3vw, 36px); }
+      .header-links a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 600; }
+      .header-links a:hover { color: var(--text); }
+      main { padding: 76px 0 100px; }
+      .eyebrow { margin: 0 0 18px; color: var(--green); font-size: 12px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
+      h1 { max-width: 820px; margin: 0; font-size: clamp(44px, 7vw, 82px); line-height: .99; letter-spacing: -.045em; font-weight: 700; }
+      .lead { max-width: 650px; margin: 24px 0 0; color: var(--muted); font-size: clamp(16px, 2vw, 19px); line-height: 1.55; }
+      .os-picker { margin-top: 46px; }
+      .picker-label { display: block; margin-bottom: 13px; color: var(--muted); font-size: 13px; font-weight: 600; }
+      .os-options { display: flex; flex-wrap: wrap; gap: 10px; }
+      .os-option { display: inline-flex; min-height: 48px; min-width: 136px; align-items: center; justify-content: center; padding: 0 22px; border: 1px solid var(--line); border-radius: 100px; text-decoration: none; font-weight: 600; background: rgba(16, 43, 50, .7); transition: border-color .18s, background .18s; }
+      .os-option:hover { border-color: var(--green); }
+      .os-option[aria-current="page"] { border-color: var(--green); color: #05221a; background: var(--green); }
+      .install-card { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); margin-top: 26px; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: 0 24px 70px rgba(0, 0, 0, .22); }
+      .download-pane { display: flex; flex-direction: column; align-items: flex-start; padding: clamp(28px, 4vw, 50px); border-right: 1px solid var(--line); background: radial-gradient(circle at 10% 0%, rgba(32, 221, 160, .16), transparent 18rem), var(--surface-raised); }
+      .download-pane .step-label { margin: 0 0 20px; color: var(--green); font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+      .download-pane h2 { margin: 0; font-size: clamp(27px, 3vw, 38px); line-height: 1.1; letter-spacing: -.025em; }
+      .download-pane p { margin: 16px 0 24px; color: var(--muted); }
+      .download-button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: 0 25px; border-radius: 100px; color: #05221a; background: var(--green); text-decoration: none; font-weight: 700; }
+      .download-button:hover { background: #5cf0be; }
+      .file-name { margin-top: 15px; color: var(--muted); font-size: 13px; }
+      .steps-pane { padding: clamp(28px, 4vw, 50px); }
+      .steps-pane h2 { margin: 0 0 26px; font-size: 25px; letter-spacing: -.02em; }
+      .steps { display: grid; gap: 26px; margin: 0; padding: 0; list-style: none; }
+      .steps li { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 16px; }
+      .step-number { color: var(--green); font-size: 13px; font-weight: 700; letter-spacing: .1em; }
+      .steps h3 { margin: 0 0 5px; font-size: 17px; font-weight: 600; }
+      .steps p { margin: 0; color: var(--muted); font-size: 14px; }
+      .steps pre { max-width: 100%; margin: 12px 0 0; padding: 14px 16px; overflow-x: auto; overflow-wrap: anywhere; white-space: pre-wrap; border: 1px solid var(--line); border-radius: 10px; background: #06171e; color: #d9fff0; font: 500 13px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; }
+      .aftercare { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 20px; margin-top: 30px; padding: 0 2px; color: var(--muted); font-size: 14px; }
+      .aftercare p { max-width: 650px; margin: 0; }
+      .aftercare a { color: var(--green); text-underline-offset: 4px; }
+      .site-footer { border-top: 1px solid var(--line); padding: 28px 0 36px; color: var(--muted); font-size: 13px; }
+      @media (max-width: 760px) {
+        :root { --wrap: min(100% - 32px, 560px); }
+        .header-inner { min-height: 68px; }
+        .brand { font-size: 18px; }
+        .brand img { width: 37px; height: 29px; }
+        main { padding: 54px 0 76px; }
+        .os-picker { margin-top: 34px; }
+        .os-option { flex: 1 1 100px; min-width: 0; padding: 0 12px; }
+        .install-card { grid-template-columns: 1fr; }
+        .download-pane { border-right: 0; border-bottom: 1px solid var(--line); }
       }
-      .hero, .panel {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 28px;
-        box-shadow: var(--shadow);
-      }
-      .hero {
-        padding: 2rem;
-      }
-      .eyebrow {
-        display: inline-block;
-        margin-bottom: 1rem;
-        padding: 0.3rem 0.7rem;
-        border-radius: 999px;
-        background: #efe7d6;
-        color: var(--muted);
-        font: 600 0.84rem/1.2 "Helvetica Neue", Arial, sans-serif;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-      }
-      h1 {
-        margin: 0;
-        font-size: clamp(2.7rem, 5vw, 4.6rem);
-        line-height: 0.98;
-      }
-      .lead {
-        max-width: 46rem;
-        font-size: 1.12rem;
-        line-height: 1.7;
-        color: var(--muted);
-      }
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-top: 1.5rem;
-      }
-      .actions a {
-        text-decoration: none;
-        font: 600 0.95rem/1.2 "Helvetica Neue", Arial, sans-serif;
-        padding: 0.75rem 1rem;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        color: var(--text);
-        background: rgba(255, 255, 255, 0.8);
-      }
-      .actions a.primary {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: white;
-      }
-      .panel {
-        margin-top: 1.4rem;
-        padding: 1.8rem;
-      }
-      .panel h2 {
-        margin-top: 0;
-      }
-      .command {
-        overflow-x: auto;
-        padding: 1rem 1.1rem;
-        border-radius: 20px;
-        background: #1f2430;
-        color: #f4f1eb;
-        font-size: 1rem;
-        line-height: 1.6;
-      }
-      .manifest {
-        margin-top: 1rem;
-        color: var(--muted);
-        font: 0.95rem/1.6 "Helvetica Neue", Arial, sans-serif;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1rem;
-      }
-      .card {
-        padding: 1rem;
-        border-radius: 20px;
-        background: #fff;
-        border: 1px solid var(--border);
-      }
-      .card h3 {
-        margin-top: 0;
-      }
-      code {
-        background: #f3eee4;
-        border-radius: 6px;
-        padding: 0.12rem 0.35rem;
-      }
-      ul {
-        padding-left: 1.2rem;
-      }
-      @media (max-width: 640px) {
-        .hero, .panel {
-          border-radius: 22px;
-          padding: 1.4rem;
-        }
-      }
+      @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .os-option { transition: none; } }
     </style>
   </head>
   <body>
-    <div class="shell">
-      <section class="hero">
-        <span class="eyebrow">Public Install Endpoint</span>
-        <h1>Install MundusX</h1>
-        <p class="lead">This Pages-backed install surface mirrors the future public endpoint shape. It hosts the reviewed installer scripts from this repo and points them at the latest signed GitHub release artifacts.</p>
-        <div class="actions">
-          <a class="primary" href="../install.sh">Download install.sh</a>
-          <a href="../install.ps1">Download install.ps1</a>
-          <a href="../docs/install/">Install docs</a>
-          <a href="../docs/release/">Release notes and distribution</a>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="${rootHref}" aria-label="Nodara home"><img src="${rootHref}assets/nodara-mark.png" alt="" />Nodara</a>
+        <nav class="header-links" aria-label="Site"><a href="${rootHref}compute/">Compute</a><a href="../docs/">Docs</a></nav>
+      </div>
+    </header>
+    <main class="shell">
+      <p class="eyebrow">Nodara Compute</p>
+      <h1>Get your machine ready.</h1>
+      <p class="lead">Choose your operating system. We will download the installer, then guide you through the setup.</p>
+      <div class="os-picker" aria-label="Choose an operating system">
+        <span class="picker-label">Select your operating system</span>
+        <div class="os-options">
+          <a class="os-option" data-os="windows" href="?os=windows#install-steps">Windows</a>
+          <a class="os-option" data-os="macos" href="?os=macos#install-steps">macOS</a>
+          <a class="os-option" data-os="linux" href="?os=linux#install-steps">Linux</a>
         </div>
-      </section>
-
-      <section class="panel">
-        <h2>One command</h2>
-        <div class="command" id="install-command">Fetching ../install.json</div>
-        <p class="manifest" id="manifest-state">The public install surface loads its commands and release source from <code>../install.json</code>.</p>
-      </section>
-
-      <section class="panel">
-        <h2>What this endpoint guarantees</h2>
-        <div class="grid">
-          <div class="card">
-            <h3>Repo-owned scripts</h3>
-            <p>The checked-in <code>install.sh</code> and <code>install.ps1</code> scripts are published under <code>/public</code>.</p>
-          </div>
-          <div class="card">
-            <h3>Signed release source</h3>
-            <p>The installer defaults to the latest GitHub release download set and requires the matching checksum plus signed release manifest artifacts.</p>
-          </div>
-          <div class="card">
-            <h3>Reviewable copy</h3>
-            <p>The broader docs mirror stays available under <code>/public/docs</code> so install wording and release notes can be reviewed together.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2>Before you run it</h2>
-        <ul>
-          <li>Use the shell installer on macOS/Linux and the PowerShell installer on Windows.</li>
-          <li>The installer places <code>opengpu</code> or <code>opengpu.exe</code> into the platform default bin directory, with <code>mundusx</code> or <code>mundusx.exe</code> retained as a compatibility alias.</li>
-          <li>After install, use <code>opengpu install</code> before <code>opengpu start</code> so control plane, cap, and model selection are explicit.</li>
-        </ul>
-      </section>
-    </div>
+      </div>
+      <div id="install-steps">
+        <section class="install-card" data-panel="windows">
+          <div class="download-pane"><p class="step-label">Windows 10 or 11 · 64-bit</p><h2>Download for Windows</h2><p data-status>Save the PowerShell installer, then follow the steps.</p><a class="download-button" data-download-link href="${installerHref}install.ps1" download="install.ps1">Download install.ps1</a><span class="file-name">Installer file · install.ps1</span></div>
+          <div class="steps-pane"><h2>Install in three steps</h2><ol class="steps"><li><span class="step-number">01</span><div><h3>Save the installer</h3><p>Your browser saves it to its configured download location, usually Downloads.</p></div></li><li><span class="step-number">02</span><div><h3>Run it in PowerShell</h3><p>Open PowerShell and run this from your Downloads folder:</p><pre>cd "$HOME\\Downloads"
+powershell -ExecutionPolicy Bypass -File .\\install.ps1</pre></div></li><li><span class="step-number">03</span><div><h3>Finish the guided setup</h3><p>The installer opens the Nodara setup. Choose your role, contribution cap, and model, then start your node when ready.</p></div></li></ol></div>
+        </section>
+        <section class="install-card" data-panel="macos" hidden>
+          <div class="download-pane"><p class="step-label">macOS · Apple Silicon</p><h2>Download for macOS</h2><p data-status>Save the shell installer, then follow the steps.</p><a class="download-button" data-download-link href="${installerHref}install.sh" download="install.sh">Download install.sh</a><span class="file-name">Installer file · install.sh</span></div>
+          <div class="steps-pane"><h2>Install in three steps</h2><ol class="steps"><li><span class="step-number">01</span><div><h3>Save the installer</h3><p>Your browser saves it to its configured download location, usually Downloads.</p></div></li><li><span class="step-number">02</span><div><h3>Run it in Terminal</h3><p>Open Terminal and run:</p><pre>bash ~/Downloads/install.sh</pre></div></li><li><span class="step-number">03</span><div><h3>Set up your node</h3><p>Run <code>opengpu install</code> to choose your control plane, contribution cap, and model. Then run <code>opengpu start</code>.</p></div></li></ol></div>
+        </section>
+        <section class="install-card" data-panel="linux" hidden>
+          <div class="download-pane"><p class="step-label">Linux · 64-bit or ARM64</p><h2>Download for Linux</h2><p data-status>Save the shell installer, then follow the steps.</p><a class="download-button" data-download-link href="${installerHref}install.sh" download="install.sh">Download install.sh</a><span class="file-name">Installer file · install.sh</span></div>
+          <div class="steps-pane"><h2>Install in three steps</h2><ol class="steps"><li><span class="step-number">01</span><div><h3>Save the installer</h3><p>Your browser saves it to its configured download location, usually Downloads.</p></div></li><li><span class="step-number">02</span><div><h3>Run it in Terminal</h3><p>Open Terminal and run:</p><pre>bash ~/Downloads/install.sh</pre></div></li><li><span class="step-number">03</span><div><h3>Set up your node</h3><p>Run <code>opengpu install</code> to choose your control plane, contribution cap, and model. Then run <code>opengpu start</code>.</p></div></li></ol></div>
+        </section>
+      </div>
+      <div class="aftercare"><p>If your browser uses a different download folder, run the installer from that folder instead. The installer verifies the release before installing. Some verified release files still carry legacy filenames.</p><a href="${releaseHref}">Release details and checksums</a></div>
+    </main>
+    <footer class="site-footer"><div class="shell">Nodara · <a href="${rootHref}compute/">Back to Compute</a></div></footer>
     <script>
-      const manifestUrl = new URL("../install.json", window.location.href);
-      const commandNode = document.getElementById("install-command");
-      const stateNode = document.getElementById("manifest-state");
-
-      async function loadInstallManifest() {
-        const response = await fetch(manifestUrl, { headers: { Accept: "application/json" } });
-        if (!response.ok) {
-          throw new Error("manifest request failed with " + response.status);
-        }
-        const manifest = await response.json();
-        const installScriptUrl = new URL(manifest.install_script_href, manifestUrl).href;
-        const installPowershellUrl = new URL(manifest.install_powershell_href, manifestUrl).href;
-        const command =
-          "macOS/Linux: curl -fsSL " +
-          installScriptUrl +
-          " | bash\nWindows: powershell -ExecutionPolicy Bypass -Command \"iwr " +
-          installPowershellUrl +
-          " -OutFile install.ps1; .\\install.ps1\"";
-        commandNode.textContent = command;
-        stateNode.textContent =
-          "Manifest loaded from ../install.json • GitHub release source: " + manifest.release_base_url;
+      const params = new URLSearchParams(window.location.search);
+      const platforms = ["windows", "macos", "linux"];
+      const requested = params.get("os");
+      const browserPlatform = navigator.userAgent.toLowerCase();
+      const detected = browserPlatform.includes("win") ? "windows" : browserPlatform.includes("mac") ? "macos" : "linux";
+      const selected = platforms.includes(requested) ? requested : detected;
+      for (const option of document.querySelectorAll("[data-os]")) {
+        if (option.dataset.os === selected) option.setAttribute("aria-current", "page");
       }
-
-      loadInstallManifest().catch((error) => {
-        commandNode.textContent = "Failed to load install manifest";
-        stateNode.textContent = "Unable to load ../install.json: " + error.message;
-      });
+      for (const panel of document.querySelectorAll("[data-panel]")) {
+        panel.hidden = panel.dataset.panel !== selected;
+      }
+      if (platforms.includes(requested) && params.get("download") === "1") {
+        const panel = document.querySelector('[data-panel="' + selected + '"]');
+        panel.querySelector("[data-status]").textContent = "Your download should begin automatically. If it does not, use the button below.";
+        window.addEventListener("load", () => {
+          panel.querySelector("[data-download-link]").click();
+          const cleanUrl = new URL(window.location.href);
+          cleanUrl.searchParams.delete("download");
+          history.replaceState(null, "", cleanUrl);
+        }, { once: true });
+      }
     </script>
   </body>
 </html>`;
 }
 
 function renderLocalInstallPage() {
-  return renderPublicInstallPage()
-    .replaceAll("../install.json", "./install.json")
-    .replaceAll("../install.sh", "./public/install.sh")
-    .replaceAll("../install.ps1", "./public/install.ps1")
-    .replaceAll("../docs/", "./docs/")
-    .replaceAll("Public Install Endpoint", "Local Install Preview")
-    .replaceAll("This Pages-backed install surface mirrors the future public endpoint shape. It hosts the reviewed installer scripts from this repo and points them at the latest signed GitHub release artifacts.", "This localhost install surface hosts the reviewed installer scripts from this repo and points them at the current release artifacts.")
-    .replaceAll("under <code>/public</code>", "under <code>/public</code> for preview download")
-    .replaceAll("under <code>/public/docs</code>", "under <code>/docs</code>");
+  return renderPublicInstallPage({ localPreview: true });
 }
 
 function renderPublicReleasePage() {
@@ -5094,6 +5026,7 @@ function renderPublicReleasePage() {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Public Release Mirror</title>
+    <link rel="icon" href="../../assets/nodara-icon.svg" type="image/svg+xml" />
     <style>
       :root {
         color-scheme: light;
@@ -5226,10 +5159,10 @@ function renderPublicReleasePage() {
     <div class="shell">
       <section class="hero">
         <span class="eyebrow">Public Release Mirror</span>
-        <h1>Review the live release channel before the final domain exists.</h1>
-        <p class="lead">This Pages-backed release surface keeps the current GitHub-hosted distribution flow legible in pull requests. It points at the signed release artifact channel, the checked-in installer surface, and the release notes users should trust today.</p>
+        <h1>Review the Nodara release channel.</h1>
+        <p class="lead">Nodara installers use the current signed GitHub release. Some verified artifact filenames retain the previous product name until the release channel is migrated.</p>
         <div class="actions">
-          <a class="primary" href="https://github.com/mundusx/mundusx/releases/latest">Latest release notes</a>
+          <a class="primary" href="${repoReleaseNotesUrl}">Current release</a>
           <a href="../install/">Install endpoint</a>
           <a href="../docs/release/">Release strategy docs</a>
         </div>

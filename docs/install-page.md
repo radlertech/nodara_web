@@ -1,92 +1,56 @@
-# Local Install Page Preview
+# Install Nodara Compute
 
-This page defines the localhost-first install touch for MundusX while we keep the public domain for later.
+Open [the public install page](/public/install/) and choose your operating system. A link from the Compute page selects Windows, macOS, or Linux and starts the matching installer download. The page also has a download button if the browser blocks automatic downloads.
 
-## Purpose
+The browser decides where files are saved. The commands below assume its usual Downloads folder; use the actual download location if yours differs.
 
-The install page should do one thing well:
+## Windows
 
-- explain that MundusX installs with one command
-- explain that the `opengpu` CLI is installed with one command
-- show the exact copy-paste install command
-- set expectations that the installer downloads a signed platform release binary from localhost during development
-- point users to release notes and checksums
+The page downloads `install.ps1` for 64-bit Windows 10 or 11.
 
-## Canonical Copy
+### 1. Open PowerShell
 
-The local page should present this command:
-
-```bash
-RELEASE_BASE_URL=http://127.0.0.1:8788/releases/latest/download bash install.sh
-```
-
-For Windows, the local page should present:
+### 2. Run the installer
 
 ```powershell
-.\install.ps1 -ReleaseBaseUrl http://127.0.0.1:8788/releases/latest/download
+cd "$HOME\Downloads"
+powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-## What The Page Is
+### 3. Finish setup
 
-- A simple local landing page behind `http://127.0.0.1:<port>/install`
-- The source of truth for the current install command
-- The place users land before they ever see the CLI
+Follow the guided setup that opens after the installer finishes.
 
-## Local Preview
+## macOS
 
-During development, the same copy is available from the dashboard server at:
+The current public Mac release supports Apple Silicon. The page downloads `install.sh`.
 
-- `http://127.0.0.1:<port>/install`
+### 1. Open Terminal
 
-The local dashboard typically runs on `3002`, but you can override `PORT` during review.
-For the matching localhost release source, run `scripts/local-release-preview.sh up` to build and serve the repo-managed preview on `http://127.0.0.1:8788/releases/latest/download/`.
-
-This keeps the install page reviewable on localhost before the public endpoint is wired up.
-The same manifest-driven shell is also mirrored at `http://127.0.0.1:<port>/public/install` so the future public endpoint shape stays local for now.
-The broader docs copy is previewable locally from the dashboard at `http://127.0.0.1:<port>/docs`.
-The install page itself is now a shell that loads its command and release metadata from the machine-readable manifest at `http://127.0.0.1:<port>/install.json` so the HTML, installer, and release source stay in sync.
-The matching localhost release preview is also manifest-driven and loads its visible release details from `http://127.0.0.1:8788/releases/latest/download/release-manifest.json`.
-For a one-shot local verification pass, run `scripts/localhost-smoke.sh`.
-
-For end-to-end localhost testing, point `install.sh` at a local release source with:
+### 2. Run the installer
 
 ```bash
-RELEASE_BASE_URL=http://127.0.0.1:8788/releases/latest/download
+bash ~/Downloads/install.sh
 ```
 
-For Windows localhost testing with unsigned fixture artifacts, pass the same release source with `-ReleaseBaseUrl` and add `-AllowUnsignedLocalPreview`. Do not use the preview override for production or enterprise installs.
+### 3. Set up your node
 
-## What The Page Is Not
+Run `opengpu install` to choose your control plane, contribution cap, and model. Run `opengpu start` when you are ready.
 
-- Not the installer itself
-- Not the release artifact store
-- Not a dashboard
-- Not a control plane
+## Linux
 
-## Expected Flow
+The page downloads `install.sh` for supported x86-64 and ARM64 systems.
 
-1. User opens the install page.
-2. The page shows the one-line install command.
-3. The command downloads the matching signed release binary.
-4. The installer verifies the checksum and requires the signed release manifest artifacts by default.
-5. The user runs `opengpu install`.
-6. The CLI asks for control plane, contribution cap, and model selection.
-7. The user runs `opengpu start` to bring the machine online.
+### 1. Open Terminal
 
-## Page Requirements
+### 2. Run the installer
 
-- Keep the page short and readable.
-- Keep the command identical to the installer docs.
-- Keep the wording platform-aware once Windows assets are published.
-- Link to release notes and checksums when available.
-- Make the cap step obvious so a fresh contributor knows what to do before `start`.
+```bash
+bash ~/Downloads/install.sh
+```
 
-## Review Rule
+### 3. Set up your node
 
-Any change to the local install page must be reviewed against:
+Run `opengpu install` to choose your control plane, contribution cap, and model. Run `opengpu start` when you are ready.
 
-- `install.sh`
-- `install.ps1`
-- `docs/install-strategy.md`
-- `docs/who-runs-what.md`
-- `README.md`
+The installer scripts download release assets and verify their checksums and signed manifest before installation. Some verified release files still carry legacy filenames. The [release page](/public/release/) shows the current release source. A local preview of the same install page is available at `/install/`.
