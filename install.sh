@@ -3,6 +3,8 @@ set -euo pipefail
 
 BIN_NAME="opengpu"
 COMPAT_BIN_NAME="mundusx"
+BRAND_BIN_NAME="nodara"
+# The release filenames and reconnect protocol still use legacy identifiers.
 DEFAULT_INSTALL_DIR="$HOME/.local/bin"
 INSTALL_DIR="${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}"
 GLOBAL_BIN_DIR_OVERRIDE="${OPENGPU_GLOBAL_BIN_DIR:-}"
@@ -29,7 +31,7 @@ configure_chat_service() {
   local bin="${INSTALL_DIR:-$HOME/.local/bin}"
   case "$data$bin$HOME" in *$'\n'*|*$'\r'*) echo 'Unsupported newline in installation path' >&2; return 1;; esac
   case "$platform" in Darwin|Linux) ;; *) echo 'Chat service requires macOS or Linux' >&2; return 1;; esac
-  [ -x "$bin/mundusx" ] || { echo 'Install the MundusX connector first' >&2; return 1; }
+  [ -x "$bin/mundusx" ] || { echo 'Install the Nodara connector first' >&2; return 1; }
   mkdir -p "$data/logs" "$data/bin"
   chmod 700 "$data"
   local runner="$data/bin/mundusx-chat-service" reconnect="$data/bin/mundusx-reconnect"
@@ -42,7 +44,7 @@ configure_chat_service() {
   } > "$runner"
   {
     printf '#!/usr/bin/env bash\nset -eu\n'
-    printf 'case "${1:-mundusx://reconnect}" in mundusx://reconnect|mundusx://reconnect/) ;; *) echo "Unsupported MundusX action" >&2; exit 2;; esac\n'
+    printf 'case "${1:-mundusx://reconnect}" in mundusx://reconnect|mundusx://reconnect/) ;; *) echo "Unsupported Nodara action" >&2; exit 2;; esac\n'
     if [ "$platform" = Linux ]; then
       printf 'exec systemctl --user start mundusx-chat.service\n'
     else
@@ -85,12 +87,15 @@ EOF
     if command -v systemctl >/dev/null && systemctl --user daemon-reload && systemctl --user enable --now mundusx-chat.service; then
       echo 'Configured Linux user-session Chat recovery and reconnect handler.'
     else
-      echo 'Chat service files installed, but no working systemd user session was found. Run mundusx connect manually on this host.' >&2
+      echo 'Chat service files installed, but no working systemd user session was found. Run nodara connect manually on this host.' >&2
     fi
     fi
   else
-    local agents="$HOME/Library/LaunchAgents" app="$HOME/Applications/MundusX Reconnect.app"
+    local agents="$HOME/Library/LaunchAgents" app="$HOME/Applications/Nodara Reconnect.app"
     mkdir -p "$agents" "$HOME/Applications"
+    if [ -d "$HOME/Applications/MundusX Reconnect.app" ] && [ ! -e "$app" ]; then
+      mv "$HOME/Applications/MundusX Reconnect.app" "$app"
+    fi
     local xml_runner xml_log
     xml_runner=$(printf '%s' "$runner" | sed 's/\&/\&amp;/g;s/</\&lt;/g;s/>/\&gt;/g')
     xml_log=$(printf '%s' "$data/logs/connector.log" | sed 's/\&/\&amp;/g;s/</\&lt;/g;s/>/\&gt;/g')
@@ -112,7 +117,7 @@ EOF
     escaped=$(printf '%s' "$reconnect" | sed 's/\\/\\\\/g;s/"/\\"/g')
     cat > "$source_file" <<EOF
 on open location targetURL
-  if targetURL is not "mundusx://reconnect" and targetURL is not "mundusx://reconnect/" then error "Unsupported MundusX action"
+  if targetURL is not "mundusx://reconnect" and targetURL is not "mundusx://reconnect/" then error "Unsupported Nodara action"
   do shell script quoted form of "$escaped" & " " & quoted form of targetURL
 end open location
 on run
@@ -134,7 +139,7 @@ EOF
     fi
     echo 'Configured macOS login Chat recovery and reconnect handler.'
   fi
-  echo 'Existing pairing is reused. For a new installation, run mundusx connect once to approve this computer, then use Reconnect.'
+  echo 'Existing pairing is reused. For a new installation, run nodara connect once to approve this computer, then use Reconnect.'
 }
 # END MUNDUSX CHAT SERVICE
 
@@ -370,13 +375,14 @@ verify_checksum() {
 smoke_installed_binary() {
   local binary="$1"
   local label="$2"
+  local smoke_arg="${3:---version}"
 
   if [ "${OPENGPU_SKIP_INSTALL_SMOKE:-}" = "1" ]; then
     return 0
   fi
 
-  if ! "$binary" --version >/dev/null 2>&1; then
-    echo "installed ${label} failed to run: ${binary} --version" >&2
+  if ! "$binary" "$smoke_arg" >/dev/null 2>&1; then
+    echo "installed ${label} failed to run: ${binary} ${smoke_arg}" >&2
     echo "This usually means the downloaded release asset does not match this machine." >&2
     exit 1
   fi
@@ -405,12 +411,14 @@ expose_installed_commands() {
   if [ -d "$GLOBAL_BIN_DIR" ] && [ -w "$GLOBAL_BIN_DIR" ]; then
     ln -sf "$INSTALL_DIR/$BIN_NAME" "$GLOBAL_BIN_DIR/$BIN_NAME"
     ln -sf "$INSTALL_DIR/mundusx" "$GLOBAL_BIN_DIR/mundusx"
+    ln -sf "$INSTALL_DIR/$BRAND_BIN_NAME" "$GLOBAL_BIN_DIR/$BRAND_BIN_NAME"
     ln -sf "$INSTALL_DIR/mundusx-agent-server" "$GLOBAL_BIN_DIR/mundusx-agent-server"
     ln -sf "$INSTALL_DIR/opengpu-node-agent" "$GLOBAL_BIN_DIR/opengpu-node-agent"
   elif command -v sudo >/dev/null 2>&1; then
     sudo mkdir -p "$GLOBAL_BIN_DIR"
     sudo ln -sf "$INSTALL_DIR/$BIN_NAME" "$GLOBAL_BIN_DIR/$BIN_NAME"
     sudo ln -sf "$INSTALL_DIR/mundusx" "$GLOBAL_BIN_DIR/mundusx"
+    sudo ln -sf "$INSTALL_DIR/$BRAND_BIN_NAME" "$GLOBAL_BIN_DIR/$BRAND_BIN_NAME"
     sudo ln -sf "$INSTALL_DIR/mundusx-agent-server" "$GLOBAL_BIN_DIR/mundusx-agent-server"
     sudo ln -sf "$INSTALL_DIR/opengpu-node-agent" "$GLOBAL_BIN_DIR/opengpu-node-agent"
   else
@@ -429,11 +437,11 @@ install_vllm_runtime() {
     exit 1
   fi
   if [ "$arch" != "aarch64" ] && [ "$arch" != "arm64" ]; then
-    echo "the first MundusX vLLM runtime target requires Linux ARM64 (GB10/GX10)" >&2
+    echo "the Nodara vLLM runtime target requires Linux ARM64 (GB10/GX10)" >&2
     exit 1
   fi
   if ! command -v docker >/dev/null 2>&1; then
-    echo "Docker is required for the MundusX vLLM runtime" >&2
+    echo "Docker is required for the Nodara vLLM runtime" >&2
     exit 1
   fi
   if ! command -v nvidia-ctk >/dev/null 2>&1; then
@@ -463,7 +471,7 @@ install_vllm_runtime() {
 
   mkdir -p "$runtime_dir" "${OPENGPU_HOME}/models"
   cat >"$config_path" <<EOF
-# Managed by the MundusX installer.
+# Managed by the Nodara installer.
 VLLM_IMAGE=${VLLM_IMAGE}
 VLLM_IMAGE_TAG=${VLLM_IMAGE_TAG}
 VLLM_CONTAINER_NAME=mundusx-vllm
@@ -501,12 +509,12 @@ if [ "$runtime_only" -eq 0 ]; then
   echo "Verifying node agent checksum..."
   verify_checksum "$tmp_agent_checksum"
 
-  echo "Fetching MundusX agent..."
-  download_to "$mundusx_url" "$tmp_mundusx" "MundusX agent"
-  download_to "$mundusx_checksum_url" "$tmp_mundusx_checksum" "MundusX agent checksum"
+  echo "Fetching Nodara agent..."
+  download_to "$mundusx_url" "$tmp_mundusx" "Nodara agent"
+  download_to "$mundusx_checksum_url" "$tmp_mundusx_checksum" "Nodara agent checksum"
   verify_checksum "$tmp_mundusx_checksum"
-  download_to "$agent_server_url" "$tmp_agent_server" "MundusX agent server"
-  download_to "$agent_server_checksum_url" "$tmp_agent_server_checksum" "MundusX agent server checksum"
+  download_to "$agent_server_url" "$tmp_agent_server" "Nodara agent server"
+  download_to "$agent_server_checksum_url" "$tmp_agent_server_checksum" "Nodara agent server checksum"
   verify_checksum "$tmp_agent_server_checksum"
 
   chmod +x "$tmp_bin"
@@ -516,6 +524,7 @@ if [ "$runtime_only" -eq 0 ]; then
   mv "$tmp_bin" "$INSTALL_DIR/$BIN_NAME"
   mv "$tmp_agent" "$INSTALL_DIR/opengpu-node-agent"
   mv "$tmp_mundusx" "$INSTALL_DIR/mundusx"
+  ln -sf "$COMPAT_BIN_NAME" "$INSTALL_DIR/$BRAND_BIN_NAME"
   mv "$tmp_agent_server" "$INSTALL_DIR/mundusx-agent-server"
   expose_installed_commands
   configure_chat_service
@@ -523,13 +532,13 @@ if [ "$runtime_only" -eq 0 ]; then
   echo "Running installed binary smoke checks..."
   smoke_installed_binary "$INSTALL_DIR/$BIN_NAME" "$BIN_NAME"
   smoke_installed_binary "$INSTALL_DIR/opengpu-node-agent" "opengpu-node-agent"
-  smoke_installed_binary "$INSTALL_DIR/mundusx" "mundusx"
-  smoke_installed_binary "$INSTALL_DIR/mundusx-agent-server" "mundusx-agent-server"
+  smoke_installed_binary "$INSTALL_DIR/$BRAND_BIN_NAME" "$BRAND_BIN_NAME"
+  smoke_installed_binary "$INSTALL_DIR/mundusx-agent-server" "Nodara agent server" --help
 
   echo
   echo "Installed ${BIN_NAME} to ${INSTALL_DIR}/${BIN_NAME}"
-  echo "Installed MundusX agent to ${INSTALL_DIR}/mundusx"
-  echo "Installed MundusX agent server to ${INSTALL_DIR}/mundusx-agent-server"
+  echo "Installed Nodara agent command to ${INSTALL_DIR}/${BRAND_BIN_NAME}"
+  echo "Installed Nodara agent server."
   echo "Installed opengpu-node-agent to ${INSTALL_DIR}/opengpu-node-agent"
 fi
 

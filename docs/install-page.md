@@ -53,4 +53,4 @@ bash ~/Downloads/install.sh
 
 Run `opengpu install` to choose your control plane, contribution cap, and model. Run `opengpu start` when you are ready.
 
-The installer scripts download release assets and verify their checksums and signed manifest before installation. The [release page](/public/release/) shows the current release source. A local preview of the same install page is available at `/install/`.
+The installer scripts download release assets and verify their checksums and signed manifest before installation. Some verified release files still carry legacy filenames. The [release page](/public/release/) shows the current release source. A local preview of the same install page is available at `/install/`.
