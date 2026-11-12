@@ -77,6 +77,9 @@ require_line "atlas/index.html" "../assets/homepage-dark-bg-tablet.webp"
 require_line "atlas/index.html" "../assets/homepage-dark-bg-mobile.webp"
 require_line "atlas/index.html" 'data-bg-name="network-cta-mountains"'
 require_line "compute/index.html" "../assets/network-hero-globe-desktop.webp"
+require_line "compute/index.html" "?os=windows&amp;download=1#install-steps"
+require_line "compute/index.html" "?os=macos&amp;download=1#install-steps"
+require_line "compute/index.html" "?os=linux&amp;download=1#install-steps"
 require_line "compute/index.html" "../assets/network-hero-globe-tablet.webp"
 require_line "compute/index.html" "../assets/network-hero-globe-mobile.webp"
 require_line "compute/index.html" 'data-bg-name="network-cta-mountains"'
@@ -108,16 +111,21 @@ require_line "developers/index.html" 'data-bg-name="meet-atlas-background"'
 require_line "device-identity/index.html" '--wrap: min(1680px, calc(100% - 88px))'
 require_line "device-identity/index.html" 'font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;'
 require_line "device-identity/index.html" 'class="button primary"'
-require_line "install/index.html" "One command"
-require_line "install/index.html" "Fetching ./install.json"
-require_line "public/docs/install/index.html" "RELEASE_BASE_URL=http://127.0.0.1:8788/releases/latest/download bash install.sh"
+require_line "install/index.html" "Get your machine ready."
+require_line "install/index.html" "../public/install.ps1"
+require_line "public/docs/install/index.html" "Install Nodara Compute"
+require_line "public/docs/install/index.html" "bash ~/Downloads/install.sh"
 require_line "device-identity/index.html" "Device Identity Lifecycle"
 require_line "device-identity/index.html" "non-exportable device keys"
 require_line "public/docs/index.html" "Public Endpoint Mirror"
-require_line "public/docs/install/index.html" "Canonical command"
+require_line "public/docs/install/index.html" "Run the installer"
 require_line "public/install/index.html" "Install Nodara"
 require_line "public/install/index.html" '../../assets/nodara-icon.svg'
-require_line "public/install/index.html" "Fetching ../install.json"
+require_line "public/install/index.html" "../install.ps1"
+require_line "public/install/index.html" "../install.sh"
+require_line "public/install/index.html" "data-panel=\"windows\""
+require_line "public/install/index.html" "data-panel=\"macos\""
+require_line "public/install/index.html" "data-panel=\"linux\""
 require_line "public/install.json" "\"kind\": \"install-manifest\""
 require_line "public/install.json" "\"release_base_url\": \"https://github.com/mundusx/mundusx/releases/latest/download\""
 require_line "public/install.sh" 'RELEASE_BASE_URL="${RELEASE_BASE_URL:-https://github.com/mundusx/releases/releases/download/opengpu-prod}"'
