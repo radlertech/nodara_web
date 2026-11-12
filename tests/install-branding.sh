@@ -34,6 +34,18 @@ SH
   fi
 done
 
+cat > "$asset_dir/mundusx-agent-server-$target" <<'SH'
+#!/bin/sh
+[ "${1:-}" = "--help" ] || exit 2
+echo "agent server help"
+SH
+chmod +x "$asset_dir/mundusx-agent-server-$target"
+if command -v shasum >/dev/null 2>&1; then
+  (cd "$asset_dir" && shasum -a 256 "mundusx-agent-server-$target" > "mundusx-agent-server-$target.sha256")
+else
+  (cd "$asset_dir" && sha256sum "mundusx-agent-server-$target" > "mundusx-agent-server-$target.sha256")
+fi
+
 INSTALL_DIR="$install_dir" MUNDUSX_SKIP_CHAT_SERVICE=1 OPENGPU_GLOBAL_BIN_DIR="" \
   bash "$repo_root/install.sh" --local-assets "$asset_dir" --install-only > "$fixture_dir/install.log"
 

@@ -375,13 +375,14 @@ verify_checksum() {
 smoke_installed_binary() {
   local binary="$1"
   local label="$2"
+  local smoke_arg="${3:---version}"
 
   if [ "${OPENGPU_SKIP_INSTALL_SMOKE:-}" = "1" ]; then
     return 0
   fi
 
-  if ! "$binary" --version >/dev/null 2>&1; then
-    echo "installed ${label} failed to run: ${binary} --version" >&2
+  if ! "$binary" "$smoke_arg" >/dev/null 2>&1; then
+    echo "installed ${label} failed to run: ${binary} ${smoke_arg}" >&2
     echo "This usually means the downloaded release asset does not match this machine." >&2
     exit 1
   fi
@@ -532,7 +533,7 @@ if [ "$runtime_only" -eq 0 ]; then
   smoke_installed_binary "$INSTALL_DIR/$BIN_NAME" "$BIN_NAME"
   smoke_installed_binary "$INSTALL_DIR/opengpu-node-agent" "opengpu-node-agent"
   smoke_installed_binary "$INSTALL_DIR/$BRAND_BIN_NAME" "$BRAND_BIN_NAME"
-  smoke_installed_binary "$INSTALL_DIR/mundusx-agent-server" "mundusx-agent-server"
+  smoke_installed_binary "$INSTALL_DIR/mundusx-agent-server" "Nodara agent server" --help
 
   echo
   echo "Installed ${BIN_NAME} to ${INSTALL_DIR}/${BIN_NAME}"
