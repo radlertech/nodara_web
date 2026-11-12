@@ -120,6 +120,7 @@ require_line "device-identity/index.html" "non-exportable device keys"
 require_line "public/docs/index.html" "Public Endpoint Mirror"
 require_line "public/docs/install/index.html" "Run the installer"
 require_line "public/install/index.html" "Install Nodara"
+require_line "public/install/index.html" "legacy filenames"
 require_line "public/install/index.html" '../../assets/nodara-icon.svg'
 require_line "public/install/index.html" "../install.ps1"
 require_line "public/install/index.html" "../install.sh"
@@ -127,12 +128,17 @@ require_line "public/install/index.html" "data-panel=\"windows\""
 require_line "public/install/index.html" "data-panel=\"macos\""
 require_line "public/install/index.html" "data-panel=\"linux\""
 require_line "public/install.json" "\"kind\": \"install-manifest\""
-require_line "public/install.json" "\"release_base_url\": \"https://github.com/mundusx/mundusx/releases/latest/download\""
+require_line "public/install.json" "\"release_base_url\": \"https://github.com/mundusx/releases/releases/download/opengpu-prod\""
 require_line "public/install.sh" 'RELEASE_BASE_URL="${RELEASE_BASE_URL:-https://github.com/mundusx/releases/releases/download/opengpu-prod}"'
+require_line "public/install.sh" 'BRAND_BIN_NAME="nodara"'
 require_line "public/install.ps1" "x86_64-pc-windows-msvc"
+require_line "public/install.ps1" 'UserAgent.ParseAdd("Nodara-Installer/1.0")'
+require_line "public/install.ps1" 'Copy-Item -Force -LiteralPath $tempMundusx -Destination $finalNodara'
 require_line "public/release/index.html" "Public Release Mirror"
 require_line "public/release/index.html" "Fetching ../release.json"
 require_line "public/release.json" "\"kind\": \"release-channel\""
-require_line "public/release.json" "\"release_notes_url\": \"https://github.com/mundusx/mundusx/releases/latest\""
+require_line "public/release.json" "\"release_notes_url\": \"https://github.com/mundusx/releases/releases/tag/opengpu-prod\""
+
+bash "$repo_root/tests/install-branding.sh"
 
 echo "Public docs site build verified."

@@ -2,6 +2,8 @@
 
 This page defines the recommended way to distribute `opengpu` with native one-command installers that download a signed release binary and hand off first-run setup to `opengpu install`.
 
+The current Nodara installers fetch signed binaries from the existing `mundusx/releases` channel. Those verified asset filenames and the `mundusx://` reconnect protocol remain compatibility identifiers. New installs expose the `nodara` agent command, but removing the legacy identifiers requires a coordinated release and connector migration.
+
 ## Guiding Principle
 
 - Ship a signed native binary.

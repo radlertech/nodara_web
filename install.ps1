@@ -60,7 +60,7 @@ Options:
   -SkipTrayAutoStart       Install the tray companion without starting it at sign-in.
   -SkipPathUpdate          Test-only: do not add the install directory to the user PATH.
   -SkipContributorSetup    Do not open a fresh PowerShell window for `opengpu install`.
-  -Workspace <path>        Local project root. Defaults to <home>\MundusX\Projects.
+  -Workspace <path>        Local project root. Defaults to <home>\Nodara\Projects.
   -SkipChatConnect         Install the selected agent without connecting it to Chat.
   -SetupMode <mode>        Guided role: developer, contributor, or both.
   -AgentMode <mode>        Agent harness: hermes, native, or none.
@@ -92,7 +92,7 @@ function Select-AgentMode {
   Write-Host ""
   Write-Host "Would you like to configure a local coding agent now?"
   Write-Host "  1. Hermes Agent (full third-party coding harness)"
-  Write-Host "  2. MundusX Agent (built in)"
+  Write-Host "  2. Nodara Agent (built in)"
   Write-Host "  3. Not now (select an agent later)"
 
   while ($true) {
@@ -140,8 +140,17 @@ function Select-SetupMode {
   }
 }
 
+function Get-DefaultWorkspace {
+  $nodaraWorkspace = Join-Path $env:USERPROFILE "Nodara\Projects"
+  $legacyWorkspace = Join-Path $env:USERPROFILE "MundusX\Projects"
+  if ((Test-Path -LiteralPath $legacyWorkspace) -and -not (Test-Path -LiteralPath $nodaraWorkspace)) {
+    return $legacyWorkspace
+  }
+  return $nodaraWorkspace
+}
+
 function Select-Workspace {
-  $defaultWorkspace = Join-Path $env:USERPROFILE "MundusX\Projects"
+  $defaultWorkspace = Get-DefaultWorkspace
   $choice = Read-Host "Local project folder [default: $defaultWorkspace]"
   if ([string]::IsNullOrWhiteSpace($choice)) { return $defaultWorkspace }
   return [IO.Path]::GetFullPath($choice.Trim().Trim('"'))
@@ -459,7 +468,7 @@ function Copy-ReleaseFile {
     $handler.AllowAutoRedirect = $true
     $client = New-Object System.Net.Http.HttpClient($handler)
     $client.Timeout = [TimeSpan]::FromHours(2)
-    $client.DefaultRequestHeaders.UserAgent.ParseAdd("MundusX-Installer/1.0")
+    $client.DefaultRequestHeaders.UserAgent.ParseAdd("Nodara-Installer/1.0")
 
     $request = New-Object System.Net.Http.HttpRequestMessage([System.Net.Http.HttpMethod]::Get, $downloadSource)
     foreach ($name in $headers.Keys) {
@@ -632,7 +641,8 @@ function Verify-ReleaseAsset {
     [string]$ReleaseBase,
     [string]$AssetName,
     [string]$Destination,
-    [object]$ManifestAsset
+    [object]$ManifestAsset,
+    [string]$DisplayName = $AssetName
   )
 
   if (-not $ManifestAsset -or -not $ManifestAsset.checksum_sha256) {
@@ -643,8 +653,8 @@ function Verify-ReleaseAsset {
   }
 
   $checksumDestination = "$Destination.sha256"
-  Copy-ReleaseFile -Source "$ReleaseBase/$AssetName" -Destination $Destination -Label $AssetName
-  Copy-ReleaseFile -Source "$ReleaseBase/$AssetName.sha256" -Destination $checksumDestination -Label "$AssetName checksum"
+  Copy-ReleaseFile -Source "$ReleaseBase/$AssetName" -Destination $Destination -Label $DisplayName
+  Copy-ReleaseFile -Source "$ReleaseBase/$AssetName.sha256" -Destination $checksumDestination -Label "$DisplayName checksum"
   $expected = Read-ChecksumHash -Path $checksumDestination
   if ($ManifestAsset -and $ManifestAsset.checksum_sha256) {
     $manifestChecksum = $ManifestAsset.checksum_sha256.ToString().ToUpperInvariant()
@@ -675,7 +685,7 @@ function Start-ChatConnection {
   $resolvedWorkspace = if ($WorkspacePath.Trim()) {
     [IO.Path]::GetFullPath($WorkspacePath)
   } else {
-    Join-Path $env:USERPROFILE "MundusX\Projects"
+    Get-DefaultWorkspace
   }
   New-Item -ItemType Directory -Force -Path $resolvedWorkspace | Out-Null
   $escapedCliPath = $CliPath.Replace("'", "''")
@@ -739,6 +749,7 @@ $runtimeSelectionReason = if ($SkipModelRuntime) {
   "auto-selected Vulkan fallback"
 }
 $profile = if ($SkipModelRuntime) { "windows-x86_64-agent-only" } elseif ($cudaRuntimeRequired) { "windows-x86_64-cuda" } else { "windows-x86_64-vulkan" }
+# Signed release filenames and the reconnect protocol still use legacy identifiers.
 $assetName = "opengpu-$target.exe"
 $agentAssetName = "opengpu-node-agent-$target.exe"
 $mundusxAssetName = "mundusx-$target.exe"
@@ -766,6 +777,7 @@ $tempCudaRuntime = Join-Path $tempDir $cudaRuntimeAssetName
 $tempVulkanRuntime = Join-Path $tempDir $vulkanRuntimeAssetName
 $finalExe = Join-Path $InstallDir "opengpu.exe"
 $finalMundusx = Join-Path $InstallDir "mundusx.exe"
+$finalNodara = Join-Path $InstallDir "nodara.exe"
 $finalAgentServer = Join-Path $InstallDir "mundusx-agent-server.exe"
 $finalAgent = Join-Path $InstallDir "opengpu-node-agent.exe"
 $finalTray = Join-Path $InstallDir "mundusx-tray.exe"
@@ -788,7 +800,7 @@ Write-Output "  cuda vram: $(if ($gpu -and $gpu.VramMb) { "$($gpu.VramMb) MB" } 
 Write-Output "  source: $releaseBase"
 Write-Output "  asset: $assetName"
 Write-Output "  node agent: $agentAssetName"
-Write-Output "  tray companion: $trayAssetName"
+Write-Output "  tray companion: Nodara"
 Write-Output "  runtime: $(if ($SkipModelRuntime) { 'not included' } elseif ($cudaRuntimeRequired) { $cudaRuntimeAssetName } else { $vulkanRuntimeAssetName })"
 Write-Output "  runtime selection: $runtimeSelectionReason"
 Write-Output "  install: $InstallDir"
@@ -869,21 +881,21 @@ try {
   Write-Output "Verifying node agent checksum..."
   $agentExpected = Verify-ReleaseAsset -ReleaseBase $releaseBase -AssetName $agentAssetName -Destination $tempAgent -ManifestAsset $agentManifestAsset
 
-  Write-Output "Fetching MundusX agent..."
-  Verify-ReleaseAsset -ReleaseBase $releaseBase -AssetName $mundusxAssetName -Destination $tempMundusx -ManifestAsset (Find-ManifestReleaseAsset -Manifest $manifest -Name $mundusxAssetName) | Out-Null
-  Verify-ReleaseAsset -ReleaseBase $releaseBase -AssetName $agentServerAssetName -Destination $tempAgentServer -ManifestAsset (Find-ManifestReleaseAsset -Manifest $manifest -Name $agentServerAssetName) | Out-Null
+  Write-Output "Fetching Nodara agent..."
+  Verify-ReleaseAsset -ReleaseBase $releaseBase -AssetName $mundusxAssetName -Destination $tempMundusx -ManifestAsset (Find-ManifestReleaseAsset -Manifest $manifest -Name $mundusxAssetName) -DisplayName "Nodara agent" | Out-Null
+  Verify-ReleaseAsset -ReleaseBase $releaseBase -AssetName $agentServerAssetName -Destination $tempAgentServer -ManifestAsset (Find-ManifestReleaseAsset -Manifest $manifest -Name $agentServerAssetName) -DisplayName "Nodara agent server" | Out-Null
 
   Write-InstallerPhase -Current 5 -Total 6 -Message "Downloading the Windows tray application"
   $trayManifestAsset = Find-ManifestReleaseAsset -Manifest $manifest -Name $trayAssetName
   Write-Output "Fetching Windows tray companion..."
   Write-Output "Verifying Windows tray companion checksum..."
-  $trayExpected = Verify-ReleaseAsset -ReleaseBase $releaseBase -AssetName $trayAssetName -Destination $tempTray -ManifestAsset $trayManifestAsset
+  $trayExpected = Verify-ReleaseAsset -ReleaseBase $releaseBase -AssetName $trayAssetName -Destination $tempTray -ManifestAsset $trayManifestAsset -DisplayName "Nodara tray companion"
 
   $trayIconManifestAsset = Find-ManifestReleaseAsset -Manifest $manifest -Name $trayIconAssetName
   if ($trayIconManifestAsset) {
     Write-Output "Fetching Windows tray icon..."
     Write-Output "Verifying Windows tray icon checksum..."
-    $trayIconExpected = Verify-ReleaseAsset -ReleaseBase $releaseBase -AssetName $trayIconAssetName -Destination $tempTrayIcon -ManifestAsset $trayIconManifestAsset
+    $trayIconExpected = Verify-ReleaseAsset -ReleaseBase $releaseBase -AssetName $trayIconAssetName -Destination $tempTrayIcon -ManifestAsset $trayIconManifestAsset -DisplayName "Nodara tray icon"
   } else {
     Write-Warning "release manifest does not include $trayIconAssetName; tray will use the embedded/system icon fallback"
   }
@@ -892,6 +904,7 @@ try {
   Stop-InstalledOpenGpuProcesses -OpenGpuHome (Get-OpenGpuHome)
   Copy-Item -Force -LiteralPath $tempExe -Destination $finalExe
   Copy-Item -Force -LiteralPath $tempMundusx -Destination $finalMundusx
+  Copy-Item -Force -LiteralPath $tempMundusx -Destination $finalNodara
   Copy-Item -Force -LiteralPath $tempAgentServer -Destination $finalAgentServer
   Copy-Item -Force -LiteralPath $tempAgent -Destination $finalAgent
   Copy-Item -Force -LiteralPath $tempTray -Destination $finalTray
@@ -931,8 +944,8 @@ try {
 
 Write-Output ""
 Write-Output "Installed opengpu to $finalExe"
-Write-Output "Installed MundusX agent to $finalMundusx"
-Write-Output "Installed MundusX agent server to $finalAgentServer"
+Write-Output "Installed Nodara agent command to $finalNodara"
+Write-Output "Installed Nodara agent server."
 Write-Output "Installed node agent to $finalAgent"
 Write-Output "Installed tray companion to $finalTray"
 if ($trayIconExpected) {
@@ -941,7 +954,7 @@ if ($trayIconExpected) {
 }
 $chatProtocolKey = 'HKCU:\Software\Classes\mundusx'
 New-Item -Path $chatProtocolKey -Force | Out-Null
-Set-Item -Path $chatProtocolKey -Value 'URL:MundusX'
+Set-Item -Path $chatProtocolKey -Value 'URL:Nodara'
 New-ItemProperty -Path $chatProtocolKey -Name 'URL Protocol' -Value '' -PropertyType String -Force | Out-Null
 New-Item -Path "$chatProtocolKey\shell\open\command" -Force | Out-Null
 Set-Item -Path "$chatProtocolKey\shell\open\command" -Value ('"' + $finalTray + '" --reconnect "%1"')
@@ -949,13 +962,14 @@ Write-Output 'Configured browser Reconnect to open the installed Nodara app'
 if (-not $SkipTrayAutoStart) {
   $runKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
   New-Item -Path $runKey -Force | Out-Null
-  New-ItemProperty -Path $runKey -Name "MundusX" -Value ('"' + $finalTray + '"') -PropertyType String -Force | Out-Null
-  Write-Output "Configured MundusX tray to start at sign-in"
+  New-ItemProperty -Path $runKey -Name "Nodara" -Value ('"' + $finalTray + '"') -PropertyType String -Force | Out-Null
+  Remove-ItemProperty -Path $runKey -Name "MundusX" -ErrorAction SilentlyContinue
+  Write-Output "Configured Nodara tray to start at sign-in"
   if ($ReauthorizeChat -and -not $SkipChatConnect -and $AgentMode -ne "none") {
-    Write-Output "MundusX tray will start after browser account approval"
+    Write-Output "Nodara tray will start after browser account approval"
   } else {
     Start-Process -FilePath $finalTray
-    Write-Output "Started MundusX tray companion"
+    Write-Output "Started Nodara tray companion"
   }
 }
 if ($cudaRuntimeRequired -or $vulkanRuntimeRequired) {
@@ -990,8 +1004,8 @@ if ($SkipContributorSetup) {
 }
 if ($AgentMode -eq "none") {
   Write-Output "Agent setup was deferred. Later, run:"
-  Write-Output "  mundusx agent install hermes"
-  Write-Output "  or: mundusx agent use native"
+  Write-Output "  nodara agent install hermes"
+  Write-Output "  or: nodara agent use native"
 }
 Write-Output ""
 Write-Output "[6/6 - overall 100%] Installation complete"

@@ -6,8 +6,8 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const outputDir = path.resolve(process.argv[2] ?? path.join(repoRoot, "dist/public-docs-site"));
-const repoReleaseBaseUrl = "https://github.com/mundusx/mundusx/releases/latest/download";
-const repoReleaseNotesUrl = "https://github.com/mundusx/mundusx/releases/latest";
+const repoReleaseBaseUrl = "https://github.com/mundusx/releases/releases/download/opengpu-prod";
+const repoReleaseNotesUrl = "https://github.com/mundusx/releases/releases/tag/opengpu-prod";
 const brandMarkSource = path.join(repoRoot, "media/nodara-mark.png");
 const brandIconSource = path.join(repoRoot, "media/nodara-icon.svg");
 const installScriptContents = fs.readFileSync(path.join(repoRoot, "install.sh"), "utf8");
@@ -4984,7 +4984,7 @@ powershell -ExecutionPolicy Bypass -File .\\install.ps1</pre></div></li><li><spa
           <div class="steps-pane"><h2>Install in three steps</h2><ol class="steps"><li><span class="step-number">01</span><div><h3>Save the installer</h3><p>Your browser saves it to its configured download location, usually Downloads.</p></div></li><li><span class="step-number">02</span><div><h3>Run it in Terminal</h3><p>Open Terminal and run:</p><pre>bash ~/Downloads/install.sh</pre></div></li><li><span class="step-number">03</span><div><h3>Set up your node</h3><p>Run <code>opengpu install</code> to choose your control plane, contribution cap, and model. Then run <code>opengpu start</code>.</p></div></li></ol></div>
         </section>
       </div>
-      <div class="aftercare"><p>If your browser uses a different download folder, run the installer from that folder instead. The installer verifies the release before installing.</p><a href="${releaseHref}">Release details and checksums</a></div>
+      <div class="aftercare"><p>If your browser uses a different download folder, run the installer from that folder instead. The installer verifies the release before installing. Some verified release files still carry legacy filenames.</p><a href="${releaseHref}">Release details and checksums</a></div>
     </main>
     <footer class="site-footer"><div class="shell">Nodara · <a href="${rootHref}compute/">Back to Compute</a></div></footer>
     <script>
@@ -5159,10 +5159,10 @@ function renderPublicReleasePage() {
     <div class="shell">
       <section class="hero">
         <span class="eyebrow">Public Release Mirror</span>
-        <h1>Review the live release channel before the final domain exists.</h1>
-        <p class="lead">This Pages-backed release surface keeps the current GitHub-hosted distribution flow legible in pull requests. It points at the signed release artifact channel, the checked-in installer surface, and the release notes users should trust today.</p>
+        <h1>Review the Nodara release channel.</h1>
+        <p class="lead">Nodara installers use the current signed GitHub release. Some verified artifact filenames retain the previous product name until the release channel is migrated.</p>
         <div class="actions">
-          <a class="primary" href="https://github.com/mundusx/mundusx/releases/latest">Latest release notes</a>
+          <a class="primary" href="${repoReleaseNotesUrl}">Current release</a>
           <a href="../install/">Install endpoint</a>
           <a href="../docs/release/">Release strategy docs</a>
         </div>
